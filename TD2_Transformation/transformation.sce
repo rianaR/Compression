@@ -16,24 +16,31 @@ function [tRow] = haarTransformRow(row)
 endfunction
 
 function [transform] = haarTransform2D(img, level)
+    //transform : image which is transformed at each iteration
     transform=img;
     
     for l = 1:level
+        //where to apply the Haar transform at each iteration
         rowDimFilter = size(transform, 1)/(2^(l-1));
         colDimFilter = size(transform, 2)/(2^(l-1));
         
+        //Transformations on rows
         filtImg=[];
         for i = 1:rowDimFilter
             filtImg = [filtImg; haarTransformRow(transform(i,1:colDimFilter))];
         end
+        
+        //Transformation on columns
         filtImg2 = [];
         for i = 1:colDimFilter
             filtImg2 = [filtImg2 haarTransformRow(filtImg(1:rowDimFilter,i)')'];
         end
+        
+        //We modify the upper-left part of the final image
         transform(1:rowDimFilter, 1:colDimFilter)=filtImg2;
     end
 endfunction
 
-lena = double(rgb2gray(imread("images/Baboon.jpg")));
-fLena = haarTransform2D(lena, 2);
-figure; ShowImage(abs(fLena/255), "filtered Lena");
+baboon = double(rgb2gray(imread("images/Baboon.jpg")));
+fBaboon = haarTransform2D(baboon, 2);
+figure; ShowImage(abs(fBaboon/255), "filtered Baboon");
