@@ -83,7 +83,7 @@ endfunction
 baboon = double(rgb2gray(imread("images/Baboon.jpg")));
 figure; ShowImage(abs(baboon/255), "original Baboon");
 
-fBaboon = haarTransform2D(baboon, 2);
+fBaboon = haarTransform2D(baboon, 2);;
 figure; ShowImage(abs(fBaboon/255), "filtered Baboon");
 
 synthBaboon = haarSynthesis2D(fBaboon, 2);

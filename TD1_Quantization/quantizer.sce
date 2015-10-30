@@ -35,11 +35,11 @@ scf(0); plot(test, quantizedTest, 'o')
 
 //Quantizing "Baboon.jpg"
 origImage = double(imread("images/lena.jpg"));
-R2 = 6;
-quantized = myquantizer(origImage, R2, 0, 255);
-showImages = [origImage quantized];
-imTitle = "After quantization (R="+string(R2)+")";
-//figure; ShowImage(showImages, imTitle);
+for R2=2:6
+    quantized = myquantizer(origImage, R2, 0, 255);
+    imTitle = "After quantization (R="+string(R2)+")";
+    //figure; ShowImage(quantized, imTitle);
+end
 mseValues = [];
 for R = 1:8
     mseValues = [mseValues  mse(origImage, myquantizer(origImage, R, 0, 255))]
