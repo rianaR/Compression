@@ -1,0 +1,5 @@
+% returns the correlation between two images
+function [err] = MSE(img1, img2)
+    % mse formula  
+    err = corr2(img1,img2);
+end

@@ -30,7 +30,7 @@ function [bestBlockPosition, motionVector] = bestCorrespondingBlock(block, block
     % What we'll return
     bestMatchPosition = [ -1, -1 ];
     % Initializing to a high value
-    lowestError = 30000000;
+    bestCorrelation = 0;
     % Loop on every block possible
     for i = search_min_x:search_max_x
         for j = search_min_y:search_max_y
@@ -38,12 +38,12 @@ function [bestBlockPosition, motionVector] = bestCorrespondingBlock(block, block
             generatedBlock = imgd(i:i+BLOCK_SIZE-1, j:j+BLOCK_SIZE-1);
 
             % computing correlation
-            temp_error = MSE(generatedBlock, block);
+            temp_correlation = corr2(generatedBlock, block);
 
             % If the correlation is better
-            if temp_error < lowestError
+            if temp_correlation > bestCorrelation
                 % update the return values
-                lowestError = temp_error;
+                bestCorrelation = temp_correlation;
                 bestMatchPosition = [i, j];
             end
 
