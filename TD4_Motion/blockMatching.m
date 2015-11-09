@@ -19,7 +19,7 @@ imgd2 = double(rgb2gray(imread('videos/standingup_00015.jpg')));
 %imgd1 = imgd1(1:128, 1:128);
 %imgd2 = imgd2(1:128, 1:128);
 disp('Converting to macroblocks...');
-[macroblock, positions] = image2macroblock(imgd2, BLOCK_SIZE);
+[macroblock, positions] = toMacroblocks(double(imgd2), BLOCK_SIZE);
 
 disp('Compression...');
 
