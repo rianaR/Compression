@@ -16,12 +16,15 @@ video = read(reader);
 
 %imgd1 = double(rgb2gray(imread('videos/standingup_00000.jpg')));
 %imgd2 = double(rgb2gray(imread('videos/standingup_00015.jpg')));
-imgd1 = video(:,:,:,2);
-imgd2 = video(:,:,:,3);
+imgd1 = video(:,:,:,1);
+imgd2 = video(:,:,:,2);
+imgd3 = video(:,:,:,3);
 imgd1 = imgd1(1:128, 1:128);
 imgd2 = imgd2(1:128, 1:128);
+imgd3 = imgd3(1:128, 1:128);
 imwrite(imgd1, 'videos/walking1.jpg');
 imwrite(imgd2, 'videos/walking2.jpg');
+imwrite(imgd3, 'videos/walking3.jpg');
 disp('Converting to macroblocks...');
 
 [macroblock, positions] = toMacroblocks(double(imgd2), BLOCK_SIZE);
@@ -49,7 +52,7 @@ for i=1:size(macroblock,3)
     coord_y = pos(2);
     
     
-    [bestBlock_coords, movement] = matchingBlock(imgd2,param_p, block, coord_x, coord_y);
+    [bestBlock_coords, movement] = matchingBlock(double(imgd2),param_p, block, coord_x, coord_y);
 
     new_coord_x = coord_x - movement(2);
     new_coord_y = coord_y - movement(1);

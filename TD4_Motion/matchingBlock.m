@@ -38,7 +38,7 @@ function [macthingBlock, vectors] = matchingBlock(img,p, block, blockx, blocky)
     for i = xmin:xmax
         for j = ymin:ymax
 
-            generatedBlock = imgd(i:i+BlockSize-1, j:j+BlockSize-1);
+            generatedBlock = img(i:i+BlockSize-1, j:j+BlockSize-1);
 
             
             temp_error = MSE(generatedBlock, block);
