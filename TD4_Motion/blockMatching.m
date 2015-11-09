@@ -49,7 +49,7 @@ for i=1:size(macroblock,3)
     coord_y = pos(2);
     
     
-    [bestBlock_coords, movement] = bestCorrespondingBlock(block, coord_x, coord_y, imgd2, param_p);
+    [bestBlock_coords, movement] = matchingBlock(imgd2,param_p, block, coord_x, coord_y);
 
     new_coord_x = coord_x - movement(2);
     new_coord_y = coord_y - movement(1);
