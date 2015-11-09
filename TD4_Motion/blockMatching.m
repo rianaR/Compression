@@ -23,7 +23,8 @@ imgd2 = imgd2(1:128, 1:128);
 imwrite(imgd1, 'videos/walking1.jpg');
 imwrite(imgd2, 'videos/walking2.jpg');
 disp('Converting to macroblocks...');
-[macroblock, positions] = image2macroblock(imgd1, BLOCK_SIZE);
+
+[macroblock, positions] = toMacroblocks(double(imgd2), BLOCK_SIZE);
 
 disp('Compression...');
 
