@@ -1,5 +1,4 @@
-
-
+%%
 % 26/10/2015
 % TD4 Video Processing
 close all;
@@ -11,61 +10,55 @@ BLOCK_SIZE = 32;
 
 disp('Loading images...');
 
-reader = VideoReader('videos/walking.mp4');
-video = read(reader);
+reader = VideoReader('videos/planes.mp4');
+video = read(reader, [1 20]);
+for i=1:20
+    img = video(:,:,:,i);
+    img = img(513:1024, 300:(300+1023));
+    filename = char(['videos/planes',int2str(i),'.jpg']);
+    imwrite(img, filename);
+end
 
-%imgd1 = double(rgb2gray(imread('videos/standingup_00000.jpg')));
-%imgd2 = double(rgb2gray(imread('videos/standingup_00015.jpg')));
-imgd1 = video(:,:,:,1);
-imgd2 = video(:,:,:,2);
-imgd3 = video(:,:,:,3);
-imgd1 = imgd1(1:128, 1:128);
-imgd2 = imgd2(1:128, 1:128);
-imgd3 = imgd3(1:128, 1:128);
-imwrite(imgd1, 'videos/walking1.jpg');
-imwrite(imgd2, 'videos/walking2.jpg');
-imwrite(imgd3, 'videos/walking3.jpg');
+imgd1 = imread('videos/planes1.jpg');
+imgd2 = imread('videos/planes5.jpg');
+%%
 disp('Converting to macroblocks...');
-
-[macroblock, positions] = toMacroblocks(double(imgd2), BLOCK_SIZE);
+[macroblock, positions] = toMacroblocks(double(imgd1), BLOCK_SIZE);
 
 disp('Compression...');
 
-% Petit test
-param_p = 50;
+% Paramètre p permettant de calculer la largeur de la zone de recherche
+param_p = 20;
 
 [m,n] = size(imgd2);
 
-%todo: doit etre la premiere image : verifier.
-% The image reconstructed from imgd1 infos
-imgd1_reconstruct = zeros(m,n);
-
+%imgd3 est l'image que l'on va prédire
+imgd3_recons = zeros(m,n);
 % Loop de reconstruction d'imgd2
 for i=1:size(macroblock,3)
-    
-    % Parce qu'on est pas des sauvages
+    %Affichage de l'avancement du matching
     fprintf('%1.2f%% \n',i*100/size(macroblock,3));
     
+    %Recupération du bloc et de sa position
     block = macroblock(:,:,i);
     pos = positions(:,:,i);
-    coord_x = pos(1);
-    coord_y = pos(2);
+    coord_i = pos(1);
+    coord_j = pos(2);
     
     
-    [bestBlock_coords, movement] = matchingBlock(double(imgd2),param_p, block, coord_x, coord_y);
+    [movement] = getBlockMovement(double(imgd2),param_p, block, coord_i, coord_j);
+    block_temp = imgd2(coord_i:coord_i+BLOCK_SIZE-1, coord_j:coord_j+BLOCK_SIZE-1);
+    new_coord_i = coord_i + movement(1);
+    new_coord_i_block = min(new_coord_i+BLOCK_SIZE-1, m);
+    new_coord_j = coord_j + movement(2);
+    new_coord_j_block = min(new_coord_j+BLOCK_SIZE-1, n);
 
-    new_coord_x = coord_x - movement(2);
-    new_coord_y = coord_y - movement(1);
-    % todo : commenter tout ca
-    % we crop the best imgd2 block corresponding to imgd1
-    block_temp = imgd2(bestBlock_coords(1):bestBlock_coords(1)+BLOCK_SIZE-1, bestBlock_coords(2):bestBlock_coords(2)+BLOCK_SIZE-1);
-    % We put the block at the right coordinates on our reconstructed image
-    imgd1_reconstruct(coord_x:coord_x+BLOCK_SIZE-1, coord_y:coord_y+BLOCK_SIZE-1) = block_temp;
-    
+    imgd3_recons(new_coord_i:new_coord_i_block, new_coord_j:new_coord_j_block) = block_temp;
 end
 
-figure; imshow(uint8(imgd1_reconstruct));
-% todo : comparer imgd1 imgd1_reconstruct
-
+figure; imshow(uint8(imgd3_recons));
 % Use the PSNR to measure the dirsotsion of the frame reconstructed
-
+%%
+HPSNR = vision.PSNR;
+imgd3 = imread('videos/planes9.jpg');
+psnr = step(HPSNR,imgd3,uint8(imgd3_recons))
